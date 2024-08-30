@@ -43,3 +43,4 @@ test/debuginfo-tests
 .DS_Store
 *.o
 .vscode/*
+*/*.dSYM/*
