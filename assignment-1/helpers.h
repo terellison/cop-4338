@@ -1,0 +1,1 @@
+void reverse_str(char* str, unsigned int len, char* reversed);
