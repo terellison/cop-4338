@@ -20,7 +20,7 @@ int main(void)
         arithmetic(line, len);
         reverse_arithmetic(line, len);
         tripartite(line, len);
-        // bipartite(line, len);
+        bipartite(line, len);
         // palindrome(line, len);
 
         printf("%c", '\n');
@@ -130,4 +130,24 @@ void tripartite(const char* str, const UINT len)
 
     if(partCount == 3)
         printf("balanced tripartite\n");
+}
+
+void bipartite(const char* str, const UINT len)
+{
+    if(len < 2)
+        return;
+    
+    UINT j = len / 2;
+    UINT isBipartite = 1;
+    for(UINT i = 0; i < (len / 2); ++i, ++j)
+    {
+        if(str[i] != str[j])
+        {
+            isBipartite = !isBipartite;
+            break;
+        }
+    }
+
+    if(isBipartite)
+        printf("%s", "balanced bipartite\n");
 }
