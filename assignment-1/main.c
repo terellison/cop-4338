@@ -11,7 +11,7 @@ int main(void)
     while(1)
     {
         fgets(line, LENGTH, stdin);
-        unsigned int len = strlen(line) - 1;
+        UINT len = strlen(line) - 1;
 
         if(len <= 0)
             continue;
@@ -19,7 +19,7 @@ int main(void)
         singleton(line, len);
         arithmetic(line, len);
         reverse_arithmetic(line, len);
-        // tripartite(line, len);
+        tripartite(line, len);
         // bipartite(line, len);
         // palindrome(line, len);
 
@@ -29,14 +29,14 @@ int main(void)
     return 0;
 }
 
-void singleton(const char* str, const unsigned int len)
+void singleton(const char* str, const UINT len)
 {
-    unsigned int isSingleton = 1;
+    UINT isSingleton = 1;
     if(len > 1)
     {
         char c = str[0];
 
-        for(unsigned int i = 0; i < len && isSingleton; ++i)
+        for(UINT i = 1; i < len && isSingleton; ++i)
         {
             isSingleton = c == str[i];
         }
@@ -46,14 +46,14 @@ void singleton(const char* str, const unsigned int len)
         printf("%s", "singleton\n");
 }
 
-void arithmetic(const char* str, const unsigned int len)
+void arithmetic(const char* str, const UINT len)
 {
-    unsigned int isArith = 1;
+    UINT isArith = 1;
     if(len > 1)
     {
         char c = str[0];
         
-        for(unsigned int i = 1; i < len && isArith; ++i)
+        for(UINT i = 1; i < len && isArith; ++i)
         {
             isArith = str[i] == (c + 1);
             c = str[i];
@@ -64,14 +64,14 @@ void arithmetic(const char* str, const unsigned int len)
         printf("%s", "arithmetic\n");
 }
 
-void reverse_arithmetic(const char* str, const unsigned int len)
+void reverse_arithmetic(const char* str, const UINT len)
 {
-    unsigned int isRevArith = 1;
+    UINT isRevArith = 1;
     if(len > 1)
     {
         char c = str[0];
     
-        for(unsigned int i = 1; i < len; ++i)
+        for(UINT i = 1; i < len; ++i)
         {
             isRevArith = str[i] == (c - 1);
             c = str[i];
@@ -80,4 +80,54 @@ void reverse_arithmetic(const char* str, const unsigned int len)
 
     if(isRevArith)
         printf("%s","reverse arithmetic\n");
+}
+
+void tripartite(const char* str, const UINT len)
+{
+    if(len < 3)
+        return;
+    
+    char c = str[0];
+    char part[len];
+    part[0] = c;
+    UINT p = 1;
+
+    for(UINT i = 1; i < len; ++i)
+    {
+        if(str[i] != c)
+        {
+            part[p] = str[i];
+            ++p;
+        }
+        else
+            break;
+    }
+
+    UINT partLen = p;
+
+    UINT partCount = 1;
+    UINT i = p;
+
+    while(i < len && partCount < 3)
+    {
+        UINT foundPart = 1;
+        for(UINT j = 0; j < partLen - 1; ++j)
+        {
+            if(str[i] != part[j])
+            {
+                foundPart = 0;
+                break;
+            }
+            ++i;
+        }
+
+        if(!foundPart)
+            break;
+        
+        ++partCount;
+        ++i;
+    }
+
+    if(partCount == 3)
+        printf("balanced tripartite\n");
 }
