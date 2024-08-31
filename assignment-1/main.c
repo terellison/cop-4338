@@ -18,6 +18,7 @@ int main(void)
 
         singleton(line, len);
         arithmetic(line, len);
+        reverse_arithmetic(line, len);
         // tripartite(line, len);
         // bipartite(line, len);
         // palindrome(line, len);
@@ -30,7 +31,7 @@ int main(void)
 
 void singleton(const char* str, const unsigned int len)
 {
-    int isSingleton = 1;
+    unsigned int isSingleton = 1;
     if(len > 1)
     {
         char c = str[0];
@@ -61,4 +62,22 @@ void arithmetic(const char* str, const unsigned int len)
 
     if(isArith)
         printf("%s", "arithmetic\n");
+}
+
+void reverse_arithmetic(const char* str, const unsigned int len)
+{
+    unsigned int isRevArith = 1;
+    if(len > 1)
+    {
+        char c = str[0];
+    
+        for(unsigned int i = 1; i < len; ++i)
+        {
+            isRevArith = str[i] == (c - 1);
+            c = str[i];
+        }
+    }
+
+    if(isRevArith)
+        printf("%s","reverse arithmetic\n");
 }
