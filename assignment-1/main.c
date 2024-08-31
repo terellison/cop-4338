@@ -17,7 +17,7 @@ int main(void)
             continue;
 
         singleton(line, len);
-        // arithmetic(line, len);
+        arithmetic(line, len);
         // tripartite(line, len);
         // bipartite(line, len);
         // palindrome(line, len);
@@ -35,7 +35,7 @@ void singleton(const char* str, const unsigned int len)
     {
         char c = str[0];
 
-        for(unsigned int i = 0; i < len && isSingleton == 1; ++i)
+        for(unsigned int i = 0; i < len && isSingleton; ++i)
         {
             isSingleton = c == str[i];
         }
@@ -43,4 +43,22 @@ void singleton(const char* str, const unsigned int len)
 
     if(isSingleton)
         printf("%s", "singleton\n");
+}
+
+void arithmetic(const char* str, const unsigned int len)
+{
+    unsigned int isArith = 1;
+    if(len > 1)
+    {
+        char c = str[0];
+        
+        for(unsigned int i = 1; i < len && isArith; ++i)
+        {
+            isArith = str[i] == (c + 1);
+            c = str[i];
+        }
+    }
+
+    if(isArith)
+        printf("%s", "arithmetic\n");
 }
