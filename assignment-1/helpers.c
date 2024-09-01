@@ -1,23 +1,10 @@
-#include "helpers.h"
+#include "main.h"
 
-void reverse_str(char* str, unsigned int len, char* reversed)
+void reverse_str(const char* str, const UINT len, char* result)
 {
-    // Find the actual end of the string
-    unsigned int actualEnd = 0;
-    char toTest = ' ';
-
-    while(toTest != '\0')
+    UINT j = 0;
+    for(int i = len - 1; i >= 0; i--, ++j)
     {
-        toTest = str[actualEnd];
-        ++actualEnd;
+        result[j] = *(str + i);
     }
-
-    int j = 0;
-
-    for(int i = actualEnd - 1; i >= 0; --i)
-    {
-        reversed[j] = str[i];
-        ++j;
-    }
-    
 }

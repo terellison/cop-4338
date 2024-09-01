@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <string.h>
 #include "main.h"
-#include "helpers.h"
 
 int main(void)
 {
@@ -21,7 +20,7 @@ int main(void)
         reverse_arithmetic(line, len);
         tripartite(line, len);
         bipartite(line, len);
-        // palindrome(line, len);
+        palindrome(line, len);
 
         printf("%c", '\n');
     }
@@ -150,4 +149,27 @@ void bipartite(const char* str, const UINT len)
 
     if(isBipartite)
         printf("%s", "balanced bipartite\n");
+}
+
+void palindrome(const char* str, const UINT len)
+{
+    UINT isPalindrome = 1;
+    if(len > 1)
+    {
+        char reverse[len];
+        
+        reverse_str(str, len, reverse);
+        
+        for(UINT i = 0; i < len; ++i)
+        {
+            if(str[i] != reverse[i])
+            {
+                isPalindrome = !isPalindrome;
+                break;
+            }
+        }
+    }
+
+    if(isPalindrome)
+        printf("%s", "palindrome\n");
 }
