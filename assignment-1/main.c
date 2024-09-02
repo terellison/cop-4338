@@ -10,10 +10,10 @@ int main(void)
     while(1)
     {
         fgets(line, LENGTH, stdin);
-        UINT len = strlen(line) - 1;
+        int len = strlen(line) - 1;
 
         if(len <= 0)
-            continue;
+            break;
 
         singleton(line, len);
         arithmetic(line, len);
