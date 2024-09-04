@@ -13,7 +13,7 @@ int main(void)
         int len = strlen(line) - 1;
 
         if(len <= 0)
-            break;
+            continue;
 
         singleton(line, len);
         arithmetic(line, len);
