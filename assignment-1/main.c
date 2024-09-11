@@ -13,7 +13,7 @@ int main(void)
         int len = strlen(line) - 1;
 
         if(len <= 0)
-            continue;
+            break;
 
         singleton(line, len);
         arithmetic(line, len);
@@ -23,6 +23,7 @@ int main(void)
         palindrome(line, len);
 
         printf("%c", '\n');
+        line[0] = '\0';
     }
 
     return 0;
