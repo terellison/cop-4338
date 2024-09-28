@@ -5,7 +5,7 @@ char* names[] = {"kiwi", "berries", "apple", "orange",
 "Orange", "Strawberry", "Pineapple"};
 
 int custom_strcmp(const char* first, const char* second);
-
+int custom_strcmp2(const char* first, const char* second);
 
 void swap(void* v[], int i, int j){
     void* temp = v[i];
@@ -28,12 +28,16 @@ void generic_qsort(void* v[], int left, int right,
 }
 
 int main(void){
-    generic_qsort((void**)names, 0, 11,(int(*)(void*, void*))custom_strcmp);
+    generic_qsort((void**)names, 0, 11,(int(*)(void*, void*))custom_strcmp2);
     for(int i = 0; i < 12; i++)
         printf("%s\n", names[i]);
     return 0;
 }
 
+/// @brief Compares first to second
+/// @param first 
+/// @param second 
+/// @return 
 int custom_strcmp(const char* first, const char* second)
 {
     int i = 0;
@@ -41,11 +45,11 @@ int custom_strcmp(const char* first, const char* second)
 
     while(i < firstLen && i < secLen)
     {
-        if(second[i] > first[i])
+        if(first[i] > second[i])
         {
             return 1;
         }
-        else if(second[i] < first[i])
+        else if(first[i] < second[i])
         {
             return -1;
         }
@@ -53,5 +57,42 @@ int custom_strcmp(const char* first, const char* second)
         ++i;
     }
 
+    return 0;
+}
+
+/// @brief Compares first to second while ignoring case
+/// @param first 
+/// @param second 
+/// @return 
+int custom_strcmp2(const char* first, const char* second)
+{
+    int i = 0;
+    int firstLen = strlen(first), secLen = strlen(second);
+
+    while(i < firstLen && i < secLen)
+    {
+        char a = first[i], b = second[i];
+
+        if(a >= 'A' && a <= 'Z')
+        {
+            a = a + ('a' - 'A');
+        }
+
+        if(b >= 'A' && b <= 'Z')
+        {
+            b = b + ('a' - 'A');
+        }
+
+        if(a > b)
+        {
+            return 1;
+        }
+        else if(a < b)
+        {
+            return -1;
+        }
+
+        ++i;
+    }
     return 0;
 }
