@@ -83,13 +83,86 @@ flags set_flags(int argc, char** argv){
 
 void printLines(char* initial, int i, char* pattern, flags option)
 {
+	const int patternLen = strlen(pattern);
+	int allocated = 0;
 	if(option & NUMBERED)
 			sprintf(initial, "%d. ", i + 1);
 
-		char* first_occurrence = strstr_w_option(lineptr[i], pattern, option);
+	char* first_occurrence = strstr_w_option(lineptr[i], pattern, option);
 
-		if(((option & EXCEPT) != 0) != (first_occurrence != NULL))
+	if(((option & EXCEPT) != 0) != (first_occurrence != NULL))
+	{
+		int len = strlen(lineptr[i]), reqLen = patternLen + 15;
+
+		if((option & PARTIAL) && len > reqLen)
+		{
+			int patternPos = find(lineptr[i], pattern, option);
+			if(patternPos >= 10 && patternPos < (len - patternLen)) // ellipses base case
+			{
+				char firstTen[11], lastFive[5];
+
+				strncpy(&firstTen, lineptr[i], 10);
+				strncpy(&lastFive, (lineptr[i] + (len - 5)), 5);
+
+				int newLen = 21 + patternLen; // space for first ten + ... + pattern + ... + last five
+				char partial[newLen];
+				sprintf(partial, "%s...%s...%s", firstTen, pattern, lastFive);
+
+				if(strlen(initial) < newLen)
+				{
+					char* temp = initial;
+					initial = malloc(newLen + strlen(initial));
+					strcpy(initial, temp);
+					allocated = 1;
+				}
+
+				strcat(initial, partial);
+
+			}
+			else if(patternPos < 10) // Omit first ellipses
+			{
+				// Calculate space for pattern + ellipses + last 5
+				int newLen = patternLen + 8;
+
+				if(newLen > strlen(initial))
+				{
+					char* temp = initial;
+					initial = malloc(newLen);
+					strcpy(initial, temp);
+					allocated = 1;
+				}
+
+				strcat(initial, pattern);
+				strcat(initial, "...");
+				strncat(initial, lineptr[i] + (len - 5), 5);
+			}
+			else // Omit last ellipses
+			{
+				int newLen = patternLen + 13; // space for first ten + ... + pattern
+
+				if(newLen > strlen(initial))
+				{
+					char* temp = initial;
+					initial = malloc(newLen);
+					strcpy(initial, temp);
+					allocated = 1;
+				}
+
+				strncat(initial, lineptr[i], 10);
+				strcat(initial, "...");
+				strcat(initial, pattern);
+			}
+
+			printf("%s\n", initial);
+		}
+		else
+		{
 			printf("%s%s\n", initial, lineptr[i]);
+		}
+		
+	}
+	if(allocated)
+		free(initial);	
 }
 
 int main(int argc, char** argv)
@@ -114,6 +187,7 @@ int main(int argc, char** argv)
 		for(int i = nlines - 1; i >= 0; i--)
 		{
 			printLines(initial, i, pattern, option);
+			initial[0] = '\0';
 		}
 	}
 	else
@@ -123,6 +197,6 @@ int main(int argc, char** argv)
 			printLines(initial, i, pattern, option);
 		}
 	}
-	
+
     return 0;
 }
