@@ -63,3 +63,41 @@ void quicksort(char*str[], int left, int right){
   quicksort(str, left, last-1);
   quicksort(str, last+1, right);
 }
+
+/// @brief Returns the index of the first occurrence of a given substring within a string
+/// @param str String to search
+/// @param subStr Substring to find within str
+/// @return First index of the first occurrence of subStr in str, 
+/// or -1 if subStr is not found
+int find(const char* str, const char* subStr, const flags option)
+{
+  if(!strstr_w_option(str, subStr, option))
+  {
+    return -1;
+  }
+
+  int len1 = strlen(str), len2 = strlen(subStr), 
+  i = 0, j = 0, matched = 0, rVal = 0;
+
+  while(i < len1 && j < len2 && matched < len2 - 1)
+  {
+    if(str[i] == subStr[j])
+    {
+      if(matched == 0)
+      {
+        rVal = i;
+      }
+      ++matched;
+      ++j;
+    }
+    else
+    {
+      matched = 0;
+      j = 0;
+    }
+
+    ++i;
+  }
+
+  return rVal;
+}
