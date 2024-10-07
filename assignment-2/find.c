@@ -90,14 +90,22 @@ void printLines(char* initial, int i, char* pattern, flags option)
 
 	char* first_occurrence = strstr_w_option(lineptr[i], pattern, option);
 
-	if(((option & EXCEPT) != 0) != (first_occurrence != NULL))
+	if(!(option & EXCEPT) && (first_occurrence != NULL))
 	{
 		int len = strlen(lineptr[i]), reqLen = patternLen + 15;
+		int patternPos = find(lineptr[i], pattern, option);
 
+		if(option & FIRST) // add occurrence number to initial string
+		{
+			if(option & NUMBERED)
+				sprintf(initial, "%s @%d: ", initial, patternPos);
+			else
+				sprintf(initial, "@%d: ", patternPos);
+		}
+		
 		if((option & PARTIAL) && len > reqLen)
 		{
-			int patternPos = find(lineptr[i], pattern, option);
-			if(patternPos >= 10 && patternPos < (len - patternLen)) // ellipses base case
+			if(patternPos >= 10 && patternPos < (len - (patternLen + 1))) // ellipses base case
 			{
 				char firstTen[11], lastFive[5];
 
@@ -138,7 +146,8 @@ void printLines(char* initial, int i, char* pattern, flags option)
 			}
 			else // Omit last ellipses
 			{
-				int newLen = patternLen + 13; // space for first ten + ... + pattern
+				// space for first ten + ... + pattern + remaining string after pattern
+				int newLen = 13 + patternLen + (len - (patternPos + patternLen)); 
 
 				if(newLen > strlen(initial))
 				{
@@ -150,7 +159,7 @@ void printLines(char* initial, int i, char* pattern, flags option)
 
 				strncat(initial, lineptr[i], 10);
 				strcat(initial, "...");
-				strcat(initial, pattern);
+				strncat(initial, (lineptr[i] + patternPos), len - patternPos);
 			}
 
 			printf("%s\n", initial);
@@ -160,6 +169,10 @@ void printLines(char* initial, int i, char* pattern, flags option)
 			printf("%s%s\n", initial, lineptr[i]);
 		}
 		
+	}
+	else if((option & EXCEPT) && first_occurrence == NULL)
+	{
+		printf("%s%s\n", initial, lineptr[i]);
 	}
 	if(allocated)
 		free(initial);	
@@ -174,6 +187,9 @@ int main(int argc, char** argv)
 
 	if((option & REVERSED) && (option & SORTED))
 		error(4);//cannot print the output using both sorted and reversed options...
+
+	if((option & EXCEPT) && (option & FIRST))
+		error(4); // cannot print the lines that don't include the pattern and the number the pattern appears on
 
 	int nlines = readlines();
 
