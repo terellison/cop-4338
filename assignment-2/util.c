@@ -79,9 +79,24 @@ int find(const char* str, const char* subStr, const flags option)
   int len1 = strlen(str), len2 = strlen(subStr), 
   i = 0, j = 0, matched = 0, rVal = 0;
 
-  while(i < len1 && j < len2 && matched < len2 - 1)
+  while(i < len1 && j < len2 && matched < len2)
   {
-    if(str[i] == subStr[j])
+    char a = str[i], b = subStr[j];
+
+    if(option & CASE)
+    {
+      if(a >= 'A' && a <= 'Z')
+        {
+            a = a + ('a' - 'A');
+        }
+
+        if(b >= 'A' && b <= 'Z')
+        {
+            b = b + ('a' - 'A');
+        }
+    }
+
+    if(a == b)
     {
       if(matched == 0)
       {
@@ -89,6 +104,20 @@ int find(const char* str, const char* subStr, const flags option)
       }
       ++matched;
       ++j;
+
+      if((option & MATCHED) && matched == len2)
+      {
+        // Reset matched if not fully matched
+        int goodFront = (str[rVal-1] == ' ') || (rVal == 0);
+        int goodBack = (str[i+1] == ' ') || (str[i+1] == '\0');
+
+        if(!(goodFront && goodBack))
+        {
+          matched = 0;
+          j = 0;
+        }
+        
+      }
     }
     else
     {
