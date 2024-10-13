@@ -38,8 +38,20 @@ int readlines(){
 	return nlines;
 }
 void error(int error_code){
+	switch (error_code)
+	{
+	case 5:
+		printf("%s", "find: Illegal usage. -s and -r can’t be used together.");
+		break;
+	case 6:
+		printf("%s", "fatal error: can't use -p and -x in the same execution");
+		break;
+	default:
 	printf("find: fatal error - Illegal usage. Error code: %d. Usage: \"%s\"\n",
 	error_code, "find [-n] [-x] [-s] [-r] [-m] [-c] [-f] [-p] pattern");
+		break;
+	}
+	
 	exit(error_code);
 }
 flags set_flags(int argc, char** argv){
@@ -186,10 +198,13 @@ int main(int argc, char** argv)
 	flags option = set_flags(argc, argv);
 
 	if((option & REVERSED) && (option & SORTED))
-		error(4);//cannot print the output using both sorted and reversed options...
+		error(5);//cannot print the output using both sorted and reversed options...
 
 	if((option & EXCEPT) && (option & FIRST))
 		error(4); // cannot print the lines that don't include the pattern and the number the pattern appears on
+
+	if((option & EXCEPT) && (option & PARTIAL))
+		error(6); // cannot sort and used reversed order at the same time
 
 	int nlines = readlines();
 
