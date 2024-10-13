@@ -47,8 +47,8 @@ void error(int error_code){
 		printf("%s", "fatal error: can't use -p and -x in the same execution");
 		break;
 	default:
-	printf("find: fatal error - Illegal usage. Error code: %d. Usage: \"%s\"\n",
-	error_code, "find [-n] [-x] [-s] [-r] [-m] [-c] [-f] [-p] pattern");
+		printf("find: fatal error - Illegal usage. Error code: %d. Usage: \"%s\"\n",
+		error_code, "find [-n] [-x] [-s] [-r] [-m] [-c] [-f] [-p] pattern");
 		break;
 	}
 	
@@ -117,7 +117,7 @@ void printLines(char* initial, int i, char* pattern, flags option)
 		
 		if((option & PARTIAL) && len > reqLen)
 		{
-			if(patternPos >= 10 && patternPos < (len - (patternLen + 1))) // ellipses base case
+			if(patternPos >= 10 && (patternPos + patternLen) < (len - 5)) // ellipses base case
 			{
 				char firstTen[11], lastFive[5];
 
@@ -126,12 +126,15 @@ void printLines(char* initial, int i, char* pattern, flags option)
 
 				int newLen = 21 + patternLen; // space for first ten + ... + pattern + ... + last five
 				char partial[newLen];
-				sprintf(partial, "%s...%s...%s", firstTen, pattern, lastFive);
 
-				if(strlen(initial) < newLen)
+				sprintf(partial, "%s...%s...%s", firstTen, pattern, lastFive);
+				partial[newLen] = '\0';
+				int initialLen = strlen(initial);
+				if(initialLen < newLen)
 				{
 					char* temp = initial;
-					initial = malloc(newLen + strlen(initial));
+					initial = malloc(newLen + initialLen);
+					initial[newLen + initialLen] = '\0';
 					strcpy(initial, temp);
 					allocated = 1;
 				}
