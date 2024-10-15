@@ -54,11 +54,11 @@ The program must support the following command-line arguments:
 Your program must accept a sequence of lines followed by an EOF character from standard
 input stream. Here is an example of program input:
 
-I’m very interested in Computer Science ←-
-This is a test statement ←-
-I’m in ←-
-In-N-Out has great burgers in fact ←-
-Last sentence In Ctrl +D
+I’m very interested in Computer Science ←- </br>
+This is a test statement ←- </br>
+I’m in ←- </br>
+In-N-Out has great burgers in fact ←- </br>
+Last sentence In `Ctrl +D`
 
 The output is given under different combinations of command-line arguments:
 
