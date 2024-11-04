@@ -1,15 +1,5 @@
-#include<stdio.h>
-#include<string.h>
-#include<stdlib.h>
-#include<ctype.h>
-#define error(m, c) do{fprintf(stderr, "%s\n", m);exit(c);}while(0)
-typedef enum{
-	NONE = 0,//no flags are passed in CLAs
-	CLEAR = 1,//-c
-	HEX = 1<<1, //-x
-	SCIENTIFIC = 1<<2,//-e
-	TRUNCATED = 1<<3,//-s
-}flags;
+#include "convert.h"
+
 char* strip(char * input){
     char* rv = (char*)malloc(strlen(input)+1);
     int left, right;
@@ -26,8 +16,53 @@ char* strip(char * input){
     strncpy(rv, input + left, right-left+1);
     return rv;
 }
-int is_double(char*);
-int is_int(char*);
+
+int is_int(char* input){
+	//checks whether input can be a string representation of an int
+	if(*input == '+' || * input == '-')
+		input++;
+	while(*input)
+		if(!isdigit(*input++))
+			return 0;
+	return 1;
+}
+
+char* tolower_str(char* input){
+	//lowers the case of characters in a string... it's called in is_double
+	char* rv = strdup(input);
+	int i = 0;
+	while(*input)
+		rv[i++] = tolower(*input++);
+	return rv[i] = '\0', rv;
+}
+
+int is_double(char* input){
+	//checks whether input can be a string representation of a double
+	input = tolower_str(input);
+	if(!strcmp(input, "inf") || !strcmp(input, "nan") || 
+	!strcmp(input, "-inf"))
+		return 1;
+	if(strchr(input, 'e') != strrchr(input, 'e'))
+		return 0;//at-most one 'e' is allowed!
+	if(*input == '+' || * input == '-')//parse the sign
+		input++;
+	while(*input && *input != '.' && *input != 'e')
+		if(!isdigit(*input++))//parse the integer value
+			return 0;
+	if(*input++ == '.')
+		while(*input && *input != 'e')
+			if(!isdigit(*input++))//parse the fraction
+				return 0;
+	if(*input++ == 'e'){
+		if(*input == '+' || * input == '-')
+			input++;//parse the sign of exponent
+		while(*input)
+			if(!isdigit(*input++))//parse the exponent
+				return 0;
+	}
+	return 1;
+}
+
 int main(int argc, char* argv[]){
 	flags flag = NONE;// combination of flags
 	char in_fmt[4] = "txt";
@@ -107,46 +142,4 @@ int main(int argc, char* argv[]){
 	}	
 	return 0;//no error occured!
 }
-int is_int(char* input){
-	//checks whether input can be a string representation of an int
-	if(*input == '+' || * input == '-')
-		input++;
-	while(*input)
-		if(!isdigit(*input++))
-			return 0;
-	return 1;
-}
-char* tolower_str(char* input){
-	//lowers the case of characters in a string... it's called in is_double
-	char* rv = strdup(input);
-	int i = 0;
-	while(*input)
-		rv[i++] = tolower(*input++);
-	return rv[i] = '\0', rv;
-}
-int is_double(char* input){
-	//checks whether input can be a string representation of a double
-	input = tolower_str(input);
-	if(!strcmp(input, "inf") || !strcmp(input, "nan") || 
-	!strcmp(input, "-inf"))
-		return 1;
-	if(strchr(input, 'e') != strrchr(input, 'e'))
-		return 0;//at-most one 'e' is allowed!
-	if(*input == '+' || * input == '-')//parse the sign
-		input++;
-	while(*input && *input != '.' && *input != 'e')
-		if(!isdigit(*input++))//parse the integer value
-			return 0;
-	if(*input++ == '.')
-		while(*input && *input != 'e')
-			if(!isdigit(*input++))//parse the fraction
-				return 0;
-	if(*input++ == 'e'){
-		if(*input == '+' || * input == '-')
-			input++;//parse the sign of exponent
-		while(*input)
-			if(!isdigit(*input++))//parse the exponent
-				return 0;
-	}
-	return 1;
-}
+
