@@ -1,5 +1,8 @@
 #include "convert.h"
 
+char* lines[MAX_LINES];
+int actualLines = 0;
+
 char* strip(char * input){
     char* rv = (char*)malloc(strlen(input)+1);
     int left, right;
@@ -119,15 +122,25 @@ int main(int argc, char* argv[]){
 		fprintf(stderr, "-e ");
 	if(flag & TRUNCATED)
 		fprintf(stderr, "-s ");
-	fprintf(stderr, "\n");
-	
-	
-	char line[1000];//placeholder for a line
-	while(fgets(line, 1000, stdin)){
+	fprintf(stderr, "\n");	
+
+	char line[MAX_LINE_LENGTH];//placeholder for a line
+	while(fgets(line, MAX_LINE_LENGTH, stdin)){
 		char* delimiter = strcmp(in_fmt, "csv") == 0?",": "\t";
 		char* cell;
 		int ival; double dval;
 		line[strlen(line)-1] = '\0';//dropping the new line
+
+		char* p = malloc(strlen(line));
+
+		if(p && actualLines < MAX_LINES)
+		{
+			strcpy(p, line);
+			lines[actualLines++] = p;
+		}
+		else
+			exit(1); // no memory ;( or too many lines
+		
 		cell = strtok(line, delimiter);
 		while(cell){
 			// sscanf is like java.util.scanner that gets a String and tokenizes it...
@@ -139,7 +152,19 @@ int main(int argc, char* argv[]){
 				printf("String cell: %s\n", cell);//use %.5s if -s is given by CLAs
 			cell = strtok(NULL, delimiter);
 		}
-	}	
+	}
+	cleanup();	
 	return 0;//no error occured!
+}
+
+void cleanup()
+{
+	for(int i = 0; i < actualLines; ++i)
+	{
+		char* p = lines[i];
+
+		if(p)
+			free(p);
+	}
 }
 

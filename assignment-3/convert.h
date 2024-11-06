@@ -5,6 +5,10 @@
 
 #define error(m, c) do{fprintf(stderr, "%s\n", m);exit(c);}while(0)
 
+extern char* lines[];
+extern int actualLines;
+#define MAX_LINE_LENGTH 1000
+#define MAX_LINES 100
 typedef enum{
 	NONE = 0,//no flags are passed in CLAs
 	CLEAR = 1,//-c
@@ -16,3 +20,4 @@ typedef enum{
 int is_double(char*);
 int is_int(char*);
 char* strip(char * input);
+void cleanup(); // cleans up allocated memory in lines[]
