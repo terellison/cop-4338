@@ -139,7 +139,7 @@ int main(int argc, char* argv[]){
 			lines[actualLines++] = p;
 		}
 		else
-			exit(1); // no memory ;( or too many lines
+			error("Could not allocate memory for input",1); // no memory ;( or too many lines
 		
 		cell = strtok(line, delimiter);
 		while(cell){
