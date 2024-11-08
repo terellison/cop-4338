@@ -128,7 +128,6 @@ int main(int argc, char* argv[]){
 	char* delimiter = strcmp(in_fmt, "csv") == 0?",": "\t";
 	while(fgets(line, MAX_LINE_LENGTH, stdin)){
 		char* cell;
-		int ival; double dval;
 		int lineLen = strlen(line);
 		line[lineLen-1] = '\0';//dropping the new line
 
