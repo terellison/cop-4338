@@ -125,17 +125,19 @@ int main(int argc, char* argv[]){
 	fprintf(stderr, "\n");	
 
 	char line[MAX_LINE_LENGTH];//placeholder for a line
+	char* delimiter = strcmp(in_fmt, "csv") == 0?",": "\t";
 	while(fgets(line, MAX_LINE_LENGTH, stdin)){
-		char* delimiter = strcmp(in_fmt, "csv") == 0?",": "\t";
 		char* cell;
 		int ival; double dval;
-		line[strlen(line)-1] = '\0';//dropping the new line
+		int lineLen = strlen(line);
+		line[lineLen-1] = '\0';//dropping the new line
 
-		char* p = malloc(strlen(line));
+		char* p = malloc(lineLen+1);
 
 		if(p && actualLines < MAX_LINES)
 		{
-			strcpy(p, line);
+			strncpy(p, line, lineLen);
+			p[lineLen+1] = '\0';
 			lines[actualLines++] = p;
 		}
 		else
