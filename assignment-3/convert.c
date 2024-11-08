@@ -143,18 +143,9 @@ int main(int argc, char* argv[]){
 		else
 			error("Could not allocate memory for input",1); // no memory ;( or too many lines
 		
-		cell = strtok(line, delimiter);
-		while(cell){
-			// sscanf is like java.util.scanner that gets a String and tokenizes it...
-			if(sscanf(cell, "%d", &ival) && is_int(cell))//is_int checks the entire cell for an int. If cell is not an int, returns 0, o.w. 1
-				printf("Integer cell: %d\n", ival);//use %x if -x is given by CLAs
-			else if(sscanf(cell, "%lf", &dval) && is_double(cell))//is_double checks the entire cell for a double. If cell is not a double, returns 0, o.w. 1
-				printf("Double cell: %f\n", dval);//use %.3e if -e is given by CLAs
-			else
-				printf("String cell: %s\n", cell);//use %.5s if -s is given by CLAs
-			cell = strtok(NULL, delimiter);
-		}
 	}
+
+	convert(flag, delimiter, out_fmt);
 	cleanup();	
 	return 0;//no error occured!
 }
@@ -167,6 +158,68 @@ void cleanup()
 
 		if(p)
 			free(p);
+	}
+}
+
+void convert(flags options, char* delimiter, char* out_fmt)
+{
+	const char newDelim = strcmp(out_fmt, "txt") == 0 ? '\t' : ',';
+	for(int i = 0; i < actualLines; i++)
+	{
+		char* line = lines[i];
+
+		char* cell = getNextCell(line, delimiter, newDelim);
+		line = line + strlen(cell);
+
+		while(cell)
+		{
+			int cellLen = strlen(cell);
+			if(cellLen != 1)
+			{
+				if(options & CLEAR)
+				{
+					cell = strip(cell);
+				}
+
+				if(is_int(cell))
+				{
+					if(options & HEX)
+					{
+						printf("%x", atoi(cell));
+					}
+					else
+					{
+						printf("%d", atoi(cell));
+					}
+				}
+
+				else if(is_double(cell))
+				{
+					if(options & SCIENTIFIC)
+						printf("%.3e", atof(cell));
+					else
+						printf("%s", cell);
+				}
+
+				else
+				{
+					if(options & TRUNCATED)
+						printf("%.5s", cell);
+					else
+						printf("%s", cell);
+				}
+			}
+			free(cell);
+			cell = getNextCell(line, delimiter, newDelim);
+
+			if(cell != NULL)
+			{
+				line = line + strlen(cell);
+			}
+		}
+
+		if((i + 1) < actualLines)
+			printf("%c", '\n');
 	}
 }
 
