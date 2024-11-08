@@ -21,3 +21,4 @@ int is_double(char*);
 int is_int(char*);
 char* strip(char * input);
 void cleanup(); // cleans up allocated memory in lines[]
+char* getNextCell(char* line, char* delimiter, char newDelim);

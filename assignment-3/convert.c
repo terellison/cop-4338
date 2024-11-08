@@ -170,3 +170,41 @@ void cleanup()
 	}
 }
 
+char* getNextCell(char* line, char* delimiter, char newDelim)
+{
+	char* result = 0;
+	int len = strlen(line), cellLen = 0;
+	if(len > 0)
+	{
+		if(*line == *delimiter)
+		{
+			printf("%c", newDelim);
+			++line;
+		}
+
+		do
+		{
+			++line;
+			++cellLen;
+		}
+		while (cellLen < len && *line != *delimiter);
+
+		if(cellLen > 1)
+		{
+			result = malloc(cellLen);
+
+			if(result)
+			{
+				strncpy(result, (line - cellLen), cellLen);
+			}
+			else
+			{
+				error("Could not allocate memory", 1);
+			}
+		}
+		else if(cellLen == 1)
+			result = " ";
+	}
+	
+	return result;
+}
