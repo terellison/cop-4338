@@ -127,9 +127,10 @@ int main(int argc, char* argv[]){
 	char line[MAX_LINE_LENGTH];//placeholder for a line
 	char* delimiter = strcmp(in_fmt, "csv") == 0?",": "\t";
 	while(fgets(line, MAX_LINE_LENGTH, stdin)){
-		char* cell;
 		int lineLen = strlen(line);
-		line[lineLen-1] = '\0';//dropping the new line
+
+		if(line[lineLen-1] == '\n')
+			line[lineLen-1] = '\0';//dropping the new line
 
 		char* p = malloc(lineLen+1);
 
@@ -143,7 +144,7 @@ int main(int argc, char* argv[]){
 			error("Could not allocate memory for input",1); // no memory ;( or too many lines
 		
 	}
-
+	fprintf(stderr, "%c", '\n');
 	convert(flag, delimiter, out_fmt);
 	cleanup();	
 	return 0;//no error occured!
@@ -209,7 +210,7 @@ void convert(flags options, char* delimiter, char* out_fmt)
 			}
 
 			if(*cell != ' ')
-			free(cell);
+				free(cell);
 
 			cell = getNextCell(&line, delimiter, newDelim);
 
