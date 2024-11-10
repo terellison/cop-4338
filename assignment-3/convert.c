@@ -167,13 +167,12 @@ void convert(flags options, char* delimiter, char* out_fmt)
 	{
 		char* line = lines[i];
 
-		char* cell = getNextCell(line, delimiter, newDelim);
-		line = line + strlen(cell);
+		char* cell = getNextCell(&line, delimiter, newDelim);
 
 		while(cell)
 		{
 			int cellLen = strlen(cell);
-			if(cellLen != 1)
+			if(cellLen > 1 || *cell != ' ')
 			{
 				if(options & CLEAR)
 				{
@@ -208,13 +207,12 @@ void convert(flags options, char* delimiter, char* out_fmt)
 						printf("%s", cell);
 				}
 			}
-			free(cell);
-			cell = getNextCell(line, delimiter, newDelim);
 
-			if(cell != NULL)
-			{
-				line = line + strlen(cell);
-			}
+			if(*cell != ' ')
+			free(cell);
+
+			cell = getNextCell(&line, delimiter, newDelim);
+
 		}
 
 		if((i + 1) < actualLines)
@@ -222,40 +220,41 @@ void convert(flags options, char* delimiter, char* out_fmt)
 	}
 }
 
-char* getNextCell(char* line, char* delimiter, char newDelim)
+char* getNextCell(char** line, char* delimiter, char newDelim)
 {
 	char* result = 0;
-	int len = strlen(line), cellLen = 0;
+	int len = strlen(*line), cellLen = 0;
 	if(len > 0)
 	{
-		if(*line == *delimiter)
+		while((*line) != NULL && **line == *delimiter) // handle leading delimiters
 		{
 			printf("%c", newDelim);
-			++line;
+			++(*line);
 		}
 
-		do
+		if(*line != NULL && strlen(*line) == 0) 
+			*line = 0;
+
+		while((*line) != NULL && cellLen < len && **line != *delimiter)
 		{
-			++line;
+			++(*line);
 			++cellLen;
 		}
-		while (cellLen < len && *line != *delimiter);
 
-		if(cellLen > 1)
+		if(cellLen > 0)
 		{
-			result = malloc(cellLen);
+			result = malloc(cellLen + 1);
 
 			if(result)
 			{
-				strncpy(result, (line - cellLen), cellLen);
+				strncpy(result, ((*line) - cellLen), cellLen);
+				result[cellLen + 1] = '\0';
 			}
 			else
 			{
 				error("Could not allocate memory", 1);
 			}
 		}
-		else if(cellLen == 1)
-			result = " ";
 	}
 	
 	return result;

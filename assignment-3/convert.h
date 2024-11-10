@@ -22,4 +22,4 @@ int is_int(char*);
 char* strip(char * input);
 void cleanup(); // cleans up allocated memory in lines[]
 void convert(flags options, char* delimiter, char* out_fmt);
-char* getNextCell(char* line, char* delimiter, char newDelim);
+char* getNextCell(char** line, char* delimiter, char newDelim);
