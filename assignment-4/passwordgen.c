@@ -42,9 +42,8 @@ void* consumer(void* args)
 			//don't forget to lock/unlock the mutex before/after the remove operation
 			//check the return value of delete_value function. 
 			//If the return value is zero, try again after doing j--
-			if(!deleted)
+			while(!deleted)
 			{
-				--j;
 				random_word = words[rand()%N];
 				pthread_mutex_lock(&mutex);
 				deleted = delete_value(&h, random_word);
