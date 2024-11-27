@@ -227,16 +227,13 @@ char* getNextCell(char** line, char* delimiter, char newDelim)
 	int len = strlen(*line), cellLen = 0;
 	if(len > 0)
 	{
-		while((*line) != NULL && **line == *delimiter) // handle leading delimiters
+		while(**line != '\0' && **line == *delimiter) // handle leading delimiters
 		{
 			printf("%c", newDelim);
 			++(*line);
 		}
 
-		if(*line != NULL && strlen(*line) == 0) 
-			*line = 0;
-
-		while((*line) != NULL && cellLen < len && **line != *delimiter)
+		while(**line != '\0' && cellLen < len && **line != *delimiter)
 		{
 			++(*line);
 			++cellLen;
