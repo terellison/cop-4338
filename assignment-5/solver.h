@@ -11,6 +11,9 @@
 #define error(m, c) do{fprintf(stderr, "%s\n", m);exit(c);}while(0)
 #define BINS 101
 
+void print_buffer(char** sub_puzzle, int subpuzzle_rows, int subpuzzle_cols);
+void* solve(void* arg);
+
 struct node {
   struct node *next;
   char *value;

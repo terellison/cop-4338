@@ -1,17 +1,7 @@
 #include "solver.h"
-void* solve(void* arg){
-	//your code here
-	fprintf(stderr, "solver thread: %s\n", (char*)arg);
-}
-void print_buffer(char** sub_puzzle, int subpuzzle_rows, int subpuzzle_cols){
-	//this function is used for printing the content of each buffer cell.
-	//do NOT call this function anywhere in your final submission.
-	printf("%d by %d\n", subpuzzle_rows, subpuzzle_cols);
-	for(int i = 0; i < subpuzzle_rows;i++)
-		for(int j = 0; j < subpuzzle_cols;j++)
-			printf("%c%s", sub_puzzle[i][j], j == subpuzzle_cols - 1?"\n":"");
-}
-int main(int argc, char** argv){
+
+int main(int argc, char** argv)
+{
 	if (argc < 11)
 		error("Fatal Error. Usage: solve -dict dict.txt -input puzzle1mb.txt -size 1000 -nbuffer 64 -len 4:7 [-s]", 1);
 	int puzzle_size = 0, buf_cells = 0, i = 0,j, fd, min_len = 0, max_len = 0, sorted = 0, buf_dimension;
@@ -127,4 +117,19 @@ int main(int argc, char** argv){
 		//print the binary search tree using in-order traversal...
 		//your code here...
 	}
+}
+
+void* solve(void* arg)
+{
+	//your code here
+	fprintf(stderr, "solver thread: %s\n", (char*)arg);
+}
+void print_buffer(char** sub_puzzle, int subpuzzle_rows, int subpuzzle_cols)
+{
+	//this function is used for printing the content of each buffer cell.
+	//do NOT call this function anywhere in your final submission.
+	printf("%d by %d\n", subpuzzle_rows, subpuzzle_cols);
+	for(int i = 0; i < subpuzzle_rows;i++)
+		for(int j = 0; j < subpuzzle_cols;j++)
+			printf("%c%s", sub_puzzle[i][j], j == subpuzzle_cols - 1?"\n":"");
 }
