@@ -13,4 +13,4 @@ solve: $(OBJ)
 
 .PHONY: clean
 clean:
-	rm -f $(OBJ) solve solve.dSYM
+	rm -rf $(OBJ) solve solve.dSYM
