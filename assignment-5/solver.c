@@ -1,4 +1,5 @@
 #include "solver.h"
+hashset h;
 
 int main(int argc, char** argv)
 {
@@ -56,6 +57,28 @@ int main(int argc, char** argv)
 	}
 	//Read and move all words from dictionary_file to a new hash table (hashset)
 	//Your code here...
+	
+	char* words[100000];
+	char word[500];
+	int wordCount = 0;
+	while(fgets(word, 500, dictionary_file))
+	{
+		int n = strlen(word);
+		if(!n) continue;
+
+		if(word[n-1] == '\n')
+			word[n-1] = '\0';
+		
+		words[wordCount++] = strdup(word);
+	}
+
+	fclose(dictionary_file);
+	h = set_init();
+
+	for(int j = 0; j < wordCount; ++j)
+	{
+		insert(&h, words[j]);
+	}
 	
 	//allocate 64MB of buffer in the heap
 	//buffer is a 3D array
