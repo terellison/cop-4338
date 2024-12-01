@@ -1,8 +1,16 @@
 CC=gcc
-CFLAGS=-I. -g -w -pthread -lm
-DEPS= solve.h
-OBJ = solver.o hashset.o btree.o
+CFLAGS=-I. -g -w -pthread
+LDFLAGS=-lm
+DEPS=solve.h
+OBJ=solver.o hashset.o btree.o
+
 %.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
+
 solve: $(OBJ)
-	$(CC) -o $@ $^ $(CFLAGS)
+	$(CC) -o $@ $^ $(LDFLAGS) $(CFLAGS)
+	dsymutil $@
+
+.PHONY: clean
+clean:
+	rm -f $(OBJ) solve solve.dSYM
