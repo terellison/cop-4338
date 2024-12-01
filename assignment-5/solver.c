@@ -79,7 +79,7 @@ int main(int argc, char** argv)
 	{
 		insert(&h, words[j]);
 	}
-	
+
 	//allocate 64MB of buffer in the heap
 	//buffer is a 3D array
 	//on the outermost dimension, we have buf_cells elements
@@ -93,27 +93,38 @@ int main(int argc, char** argv)
 		for(j = 0; j < buf_dimension;j++)
 			buffer[i][j] = (char*) malloc(buf_dimension);
 	}
+
 	int buf_index = 0;
 	pthread_t t_id[buf_cells];
+
 	for(i = 0; i < buf_cells;i++)
 		t_id[i] = NULL;
 	for(int row = 0; row + max_len - 1 < puzzle_size; row += (buf_dimension - max_len + 1)){
 		int subpuzzle_rows = (row + buf_dimension <= puzzle_size)?
 				 buf_dimension:	puzzle_size - row;
+		
 		for(int column = 0; column + max_len - 1 < puzzle_size;column += (buf_dimension - max_len + 1)){
+			
 			long start = (long)row * (puzzle_size+1) + column;
 			lseek(fd,start,SEEK_SET);
+			
 			int subpuzzle_cols = (column + buf_dimension <= puzzle_size)?
 				 buf_dimension:	puzzle_size - column;
+			
 			if(t_id[buf_index])//if there is a busy consumer/solver, 
 				pthread_join(t_id[buf_index], NULL);//wait for it to finish the job before manipulating the buffer[buffer_index]
+			
 			for(i = 0; i < subpuzzle_rows;i++){
+
 				int n_read = read(fd, buffer[buf_index][i], subpuzzle_cols);
+
 				if(n_read < subpuzzle_cols)
 					error("Fatal Error. Bad read from input file", 10);
+
 				if(subpuzzle_cols < buf_dimension)
 					buffer[buf_index][i][subpuzzle_cols] = '\0';
-				lseek(fd, puzzle_size-subpuzzle_cols+1, SEEK_CUR);
+
+				lseek(fd, puzzle_size - subpuzzle_cols+1, SEEK_CUR);
 			}
 			if(subpuzzle_rows < buf_dimension)
 				buffer[buf_index][subpuzzle_rows] = NULL;
