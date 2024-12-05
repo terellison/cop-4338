@@ -19,7 +19,7 @@ void inorder_print(tnode* root){
 }
 int bst_insert(tnode** root_p, char* val){
 	if((*root_p) == NULL){//tree is empty
-		(*root_p) = talloc();
+		*root_p = talloc();
 		(*root_p)->value = strdup(val);
 		(*root_p)->left = (*root_p)->right = NULL;
 		return 1;//successful insert
@@ -27,7 +27,7 @@ int bst_insert(tnode** root_p, char* val){
 	if(!strcmp((*root_p)->value, val))//duplicate!
 		return 0;//unsuccessful
 	if(strcmp((*root_p)->value, val) > 0)
-		return bst_insert(&((*root_p)->left), val);
-	return bst_insert(&((*root_p)->right), val);
+		return bst_insert(&(*root_p)->left, val);
+	return bst_insert(&(*root_p)->right, val);
 }
 

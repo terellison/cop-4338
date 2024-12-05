@@ -30,6 +30,19 @@ struct tnode{
 	struct tnode* right;
 };
 typedef struct tnode tnode;//tnode is my binary tree node typedef
+
+typedef struct threadData 
+{
+    char **sub_puzzle;
+    int subpuzzle_rows;
+    int subpuzzle_cols;
+    int start_row;
+    int start_col;
+    int min_len;
+    int max_len;
+    int sorted;
+} threadData;
+
 //hash set functions
 int search(hashset h, char *val);
 int insert(hashset *h, char *val);
@@ -37,4 +50,7 @@ hashset set_init();
 //bst functions
 tnode* talloc();
 void inorder_print(tnode* root);
-int bst_insert(tnode** root_p, char* val);
+int bst_insert(tnode* root_p, char* val);
+void* solve(void* args);
+void searchInDirection(threadData* data, int startRow, int startCol, int rowStep, int colStep);
+
