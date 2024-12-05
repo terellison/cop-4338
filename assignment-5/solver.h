@@ -41,16 +41,35 @@ typedef struct threadData
     int min_len;
     int max_len;
     int sorted;
+    int threadIndex;
 } threadData;
+typedef struct bstData
+{
+	char* value;
+	int startRow;
+	int startCol;
+	int endRow;
+	int endCol;
+	int threadIndex;
+} bstData;
+
+struct bstNode{
+	bstData* data;
+	struct bstNode* left;
+	struct bstNode* right;
+};
+typedef struct bstNode bstNode;//bstNode is my binary tree node typedef
 
 //hash set functions
 int search(hashset h, char *val);
 int insert(hashset *h, char *val);
 hashset set_init();
+int delete_value(hashset *h, char *value);
 //bst functions
-tnode* talloc();
-void inorder_print(tnode* root);
-int bst_insert(tnode* root_p, char* val);
+bstNode* talloc();
+void inorder_print(bstNode* root);
+int bst_insert(bstNode** root_p, bstData* data);
 void* solve(void* args);
 void searchInDirection(threadData* data, int startRow, int startCol, int rowStep, int colStep);
+int checkForWord(hashset h, char* word);
 

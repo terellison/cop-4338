@@ -67,3 +67,27 @@ int search(hashset h, char *val) {
   }
   return 0;
 }
+
+int delete_value(hashset *h, char *value) {
+	unsigned index = hash(value, h->bins);
+	node *head = h->table[index];
+	if (!head)
+		return 0; // doesn't exist! unsuccessful
+	else if(!strcmp(head->value, value)){
+		h->table[index] = head->next;
+		free(head);
+	} else{
+		node *prev = head;
+		for (head = head->next; head; head = head->next)
+			if (!strcmp(head->value, value))
+				break;
+			else
+				prev = head;
+		if (!head)
+			return 0; // doesn't exist! unsuccessful
+		prev->next = head->next;
+		free(head);
+	}
+	h->size--;
+	return 1; // successful
+}

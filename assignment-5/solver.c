@@ -1,11 +1,12 @@
 #include "solver.h"
 
 hashset h;
-tnode* btreeRoot;
+bstNode* btreeRoot;
 
 
 pthread_mutex_t btreeLock;
 pthread_mutex_t bufferLock;
+pthread_mutex_t hashLock;
 
 int main(int argc, char **argv) {
     if (argc < 11)
@@ -87,6 +88,9 @@ int main(int argc, char **argv) {
 	
 	pthread_mutex_init(&btreeLock, NULL);
 	pthread_mutex_init(&bufferLock, NULL);
+	pthread_mutex_init(&hashLock, NULL);
+
+	printf("%s\t%s\t%s\t%s\n", "word", "TID", "LnSpan", "ColSpan");
 
     for (int row = 0; row < puzzle_size; row += buf_dimension) {
         int subpuzzle_rows = (row + buf_dimension <= puzzle_size) ? buf_dimension : puzzle_size - row;
@@ -121,6 +125,7 @@ int main(int argc, char **argv) {
             thread_data->min_len = min_len;
             thread_data->max_len = max_len;
 			thread_data->sorted = sorted;
+			thread_data->threadIndex = buf_index;
 
             pthread_create(&t_id[buf_index], NULL, solve, thread_data);
 
@@ -138,14 +143,18 @@ int main(int argc, char **argv) {
 		inorder_print(btreeRoot);
     }
 
+	pthread_mutex_destroy(&btreeLock);
+	pthread_mutex_destroy(&bufferLock);
+	pthread_mutex_destroy(&hashLock);
+
     return 0;
 }
 
 void* solve(void *arg) {
     threadData *data = (threadData *)arg;
     // Implement the word search logic here using data->sub_puzzle
-    fprintf(stderr, "solver thread: solving sub-puzzle of dimensions %d by %d located at index (%d,%d).\n",
-            data->subpuzzle_rows, data->subpuzzle_cols, data->start_row, data->start_col);
+    // fprintf(stderr, "solver thread: solving sub-puzzle of dimensions %d by %d located at index (%d,%d).\n",
+    //         data->subpuzzle_rows, data->subpuzzle_cols, data->start_row, data->start_col);
 
 	pthread_mutex_lock(&bufferLock);
 	for(int row = 0; row < data->subpuzzle_rows; ++row)
@@ -200,18 +209,50 @@ void searchInDirection(threadData* data, int startRow, int startCol, int rowStep
 			word[length++] = puzzle[row][col];
 			word[length] = '\0';
 
-			if(length >= min_len && search(h, word))
-			{
-				pthread_mutex_lock(&btreeLock);
-				bst_insert(&btreeRoot, word);
-				pthread_mutex_unlock(&btreeLock);
+			int exists = checkForWord(h, word);
 
+			if(length >= min_len && exists)
+			{
+				
 				if(!data->sorted)
-					printf("%s\n", word);
+				{
+					printf("%s\t%d\t%d:%d\t%d:%d\n", word, data->threadIndex,
+					startRow+1, row, startCol+1, col);
+				}
+				else
+				{
+					bstData* outputData = malloc(sizeof(bstData));
+					outputData->value = strdup(word);
+					outputData->startRow = startRow+1;
+					outputData->endRow = row;
+					outputData->startCol = startCol+1;
+					outputData->endCol = col;
+					outputData->threadIndex = data->threadIndex;
+
+					pthread_mutex_lock(&btreeLock);
+					bst_insert(&btreeRoot, outputData);
+					pthread_mutex_unlock(&btreeLock);
+				}
+				
 			}
 
 			row += rowStep;
 			col += colStep;
 		}
 	}
+}
+
+int checkForWord(hashset h, char* word)
+{
+	int rVal = 0;
+
+	pthread_mutex_lock(&hashLock);
+	if(search(h, word))
+	{
+		rVal = 1;
+		delete_value(&h, word);
+	}
+	pthread_mutex_unlock(&hashLock);
+
+	return rVal;
 }
