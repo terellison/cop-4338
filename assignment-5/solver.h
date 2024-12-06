@@ -71,5 +71,5 @@ void inorder_print(bstNode* root);
 int bst_insert(bstNode** root_p, bstData* data);
 void* solve(void* args);
 void searchInDirection(threadData* data, int startRow, int startCol, int rowStep, int colStep);
-int checkForWord(hashset h, char* word);
+int checkForDuplicate(hashset h, char* word);
 

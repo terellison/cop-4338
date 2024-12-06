@@ -209,9 +209,9 @@ void searchInDirection(threadData* data, int startRow, int startCol, int rowStep
 			word[length++] = puzzle[row][col];
 			word[length] = '\0';
 
-			int exists = checkForWord(h, word);
+			int isNotDuplicate = checkForDuplicate(h, word);
 
-			if(length >= min_len && exists)
+			if(length >= min_len && isNotDuplicate)
 			{
 				
 				if(!data->sorted)
@@ -242,7 +242,7 @@ void searchInDirection(threadData* data, int startRow, int startCol, int rowStep
 	}
 }
 
-int checkForWord(hashset h, char* word)
+int checkForDuplicate(hashset h, char* word)
 {
 	int rVal = 0;
 
